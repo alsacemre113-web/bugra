@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<title>$DAT Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Bowlby+One&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--night:#120a24;--deep:#1c0f3a;--panel:#190d33;--pink:#ff2e93;--orange:#ff9a3c;--sun:#ffd23f;--cyan:#2de2e6;--text:#f6efff;--muted:#b9a8d9;--line:#ffffff24;--bad:#ff8aa8;color-scheme:dark;--hd:"Bowlby One","Arial Black",sans-serif;--bd:"DM Sans",system-ui,sans-serif}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{background:var(--night);color:var(--text);font:400 15px/1.45 var(--bd);display:flex;flex-direction:column;padding-top:env(safe-area-inset-top,0px)}
+button,input,select,textarea{font:inherit;color:inherit}
+header{display:flex;align-items:center;gap:10px;padding:10px 16px;border-bottom:1px solid var(--line);background:var(--panel);flex-wrap:wrap}
+header h1{font:400 18px var(--hd);margin:0 auto 0 0}
+#dirty{font-size:13px;color:var(--sun);display:none}#dirty.on{display:block}
+.b{border:0;border-radius:9px;padding:9px 14px;font-weight:700;cursor:pointer;background:#ffffff16}
+.b:hover{background:#ffffff26}.b.go{background:linear-gradient(90deg,var(--pink),var(--orange));color:#1a0a22}.b.go:hover{filter:brightness(1.1)}
+.b.sm{padding:6px 10px;font-size:13px;font-weight:600}.b.red{color:var(--bad)}.b:disabled{opacity:.4;cursor:default}
+:focus-visible{outline:3px solid var(--sun);outline-offset:2px}
+main{flex:1;min-height:0;display:grid;grid-template-columns:minmax(360px,520px) 1fr}
+.ed{display:flex;flex-direction:column;min-height:0;border-right:1px solid var(--line)}
+.tabs{display:flex;gap:4px;padding:8px;overflow-x:auto;border-bottom:1px solid var(--line)}
+.tabs button{border:0;background:none;color:var(--muted);padding:8px 12px;border-radius:8px;font-weight:600;cursor:pointer;white-space:nowrap}
+.tabs button.on{background:var(--deep);color:var(--sun)}
+#pane{flex:1;overflow:auto;padding:4px 16px 40px}
+h2{font:400 16px var(--hd);margin:24px 0 8px;color:var(--sun)}
+label{display:block;font-size:12px;color:var(--muted);margin:10px 0 4px}
+input[type=text],input[type=url],input[type=number],textarea,select{width:100%;background:#0d0720;border:1px solid var(--line);border-radius:9px;padding:8px 10px}
+input[type=color]{width:100%;height:38px;padding:2px;background:#0d0720;border:1px solid var(--line);border-radius:9px}
+textarea{min-height:76px;resize:vertical}
+.card{border:1px solid var(--line);border-radius:12px;padding:2px 12px 12px;margin-top:10px;background:#ffffff06}
+.bar{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px}.g3{display:grid;grid-template-columns:1fr 80px 56px;gap:8px}
+.drop{border:2px dashed #ffffff40;border-radius:14px;padding:22px;text-align:center;color:var(--muted);cursor:pointer;margin-top:8px}
+.drop.over,.drop:hover{border-color:var(--cyan);color:var(--text)}
+.lib{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;margin-top:10px}
+.it{background:var(--deep);border-radius:12px;overflow:hidden;display:flex;flex-direction:column}
+.it img,.th{width:100%;aspect-ratio:4/3;object-fit:cover;background:#000;display:block}
+.it .i{padding:7px 8px;font-size:12px;color:var(--muted);word-break:break-all}
+.it .i b{display:inline-block;background:var(--pink);color:#1a0a22;border-radius:5px;padding:0 6px;margin:0 3px 3px 0;font-size:11px}
+.it .bar{margin:0;padding:0 6px 8px}
+.row{display:grid;grid-template-columns:72px 1fr;gap:12px;align-items:start}
+.row .th{border-radius:9px;aspect-ratio:1}
+.st{font-size:13px;min-height:18px;color:var(--muted);padding:8px 16px;border-top:1px solid var(--line)}.st.bad{color:var(--bad)}.st.ok{color:var(--cyan)}
+.pv{display:flex;flex-direction:column;min-height:0;background:#0b0618}
+.pvb{display:flex;gap:6px;padding:8px;border-bottom:1px solid var(--line);align-items:center}.pvb span{margin-right:auto;color:var(--muted);font-size:13px}
+.pvf{flex:1;min-height:0;display:flex;justify-content:center;overflow:auto;padding:0}
+iframe{border:0;width:100%;height:100%;background:#fff}.pvf.m iframe{width:390px;max-width:100%;margin:10px 0;border-radius:18px;height:calc(100% - 20px)}
+dialog{background:var(--panel);color:var(--text);border:1px solid var(--line);border-radius:16px;width:min(460px,94vw);padding:20px}
+dialog::backdrop{background:#000a}
+dialog p{color:var(--muted);font-size:13px;margin:6px 0}
+.mt{display:none}
+@media(max-width:900px){main{grid-template-columns:1fr}.pv{display:none}.mt{display:inline-block}body.showpv .ed{display:none}body.showpv .pv{display:flex}}
+</style>
+</head>
+<body>
+<header>
+  <h1>$DAT Admin</h1>
+  <span id="dirty">● Kaydedilmemiş değişiklik var</span>
+  <button class="b mt" id="tpv" type="button">Önizleme</button>
+  <button class="b" id="bcfg" type="button">GitHub ayarları</button>
+  <button class="b" id="bzip" type="button">ZIP indir</button>
+  <button class="b go" id="bpub" type="button">Yayınla</button>
+</header>
+<main>
+  <section class="ed">
+    <nav class="tabs" id="tabs"></nav>
+    <div id="pane"></div>
+    <div class="st" id="msg"></div>
+  </section>
+  <section class="pv">
+    <div class="pvb"><span>Canlı önizleme</span><button class="b sm" data-d="d" type="button">Masaüstü</button><button class="b sm" data-d="m" type="button">Mobil</button></div>
+    <div class="pvf" id="pvf"><iframe id="ifr" src="../index.html" title="Site önizleme"></iframe></div>
+  </section>
+</main>
+<dialog id="dlg">
+  <h2 style="margin-top:0">GitHub bağlantısı</h2>
+  <p>Yayınla butonu değişiklikleri tek commit olarak repoya gönderir, Vercel de siteyi otomatik yeniden yayınlar. Token yalnızca bu tarayıcıda saklanır.</p>
+  <label for="s-repo">Repo (kullanıcı/repo)</label><input type="text" id="s-repo" placeholder="kullanici/dog-auto-theft">
+  <div class="g2"><div><label for="s-br">Branch</label><input type="text" id="s-br" placeholder="main"></div><div><label for="s-dir">Site klasörü (kökteyse boş)</label><input type="text" id="s-dir" placeholder="public"></div></div>
+  <label for="s-tok">Fine-grained token (Contents: Read and write)</label><input type="text" id="s-tok" autocomplete="off" spellcheck="false">
+  <div class="bar"><button class="b go" id="s-ok" type="button">Kaydet</button><button class="b" id="s-test" type="button">Bağlantıyı dene</button><button class="b" id="s-x" type="button">Kapat</button></div>
+  <div class="st" id="s-msg" style="padding:8px 0 0;border:0"></div>
+</dialog>
+<script>
+"use strict";
+const $=(s,r=document)=>r.querySelector(s);
+const esc=s=>String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const PLACES={hero:"Giriş, logonun altı",about:"Hakkında, altında",gallery:"Galeri bölümü",tokenomics:"Tokenomics, altında",roadmap:"Roadmap, altında",buy:"Nasıl alınır, altında",footer:"Alt bilgi, üstünde"};
+const SIZES={S:"Küçük",M:"Orta",L:"Büyük",F:"Tam genişlik"};
+const TABS=[["img","Görseller"],["gen","Genel"],["lnk","Linkler"],["tok","Tokenomics"],["road","Roadmap"],["buy","Nasıl alınır"],["ft","Alt bilgi"]];
+let CFG,tab="img",pending=new Set(),removed=new Set(),repo=new Set(),blobs={},raw={},dirty=false,ready=false,S={};
+try{S=JSON.parse(localStorage.getItem("datAdmin")||"{}")}catch(e){}
+
+/* ---------- yardımcılar ---------- */
+function msg(t,k){const m=$("#msg");m.textContent=t||"";m.className="st"+(k?" "+k:"")}
+function touch(){dirty=true;$("#dirty").classList.add("on");sync()}
+let tm;function sync(){clearTimeout(tm);tm=setTimeout(()=>{const w=$("#ifr").contentWindow;if(ready&&w)w.postMessage({t:"dat-preview",cfg:CFG,map:blobs},location.origin)},60)}
+window.addEventListener("message",e=>{if(e.origin===location.origin&&e.data&&e.data.t==="dat-ready"){ready=true;sync()}});
+window.addEventListener("beforeunload",e=>{if(dirty){e.preventDefault();e.returnValue=""}});
+const get=p=>p.split(".").reduce((a,k)=>a[k],CFG);
+function setP(p,v){const k=p.split(".");let o=CFG;for(let i=0;i<k.length-1;i++)o=o[k[i]];o[k[k.length-1]]=v}
+const thumb=p=>blobs[p]||"../"+p;
+const fname=p=>p.replace(/^images\//,"");
+function F(l,p,o={}){let v=get(p);if(o.lines)v=v.join("\n");const a=` data-p="${p}"${o.lines?' data-lines="1"':""}${o.num?' data-num="1"':""}${o.r?' data-r="1"':""}`;
+return `<label>${l}</label>`+(o.area||o.lines?`<textarea${a}>${esc(v)}</textarea>`:`<input${a} type="${o.type||"text"}" value="${esc(v)}">`)}
+function SEL(l,p,opts,o={}){const v=get(p);return `<label>${l}</label><select data-p="${p}"${o.r?' data-r="1"':""}>${opts.map(([k,t])=>`<option value="${esc(k)}"${k===v?" selected":""}>${esc(t)}</option>`).join("")}</select>`}
+const mediaOpts=()=>CFG.media.map(m=>[m,fname(m)]);
+const mv=(l,i,n)=>`<button class="b sm" data-a="mv|${l}|${i}|-1" type="button"${i===0?" disabled":""} aria-label="Yukarı">↑</button><button class="b sm" data-a="mv|${l}|${i}|1" type="button"${i===n-1?" disabled":""} aria-label="Aşağı">↓</button>`;
+const del=(l,i)=>`<button class="b sm red" data-a="del|${l}|${i}" type="button">Sil</button>`;
+function list(l,fn,addLabel){const a=CFG[l];return a.map((x,i)=>`<div class="card">${fn(x,i)}<div class="bar">${mv(l,i,a.length)}${del(l,i)}</div></div>`).join("")+`<div class="bar"><button class="b sm" data-a="add|${l}" type="button">+ ${addLabel}</button></div>`}
+
+/* ---------- sekmeler ---------- */
+function paneImg(){
+ const used=p=>[CFG.logo===p&&"logo",CFG.badge===p&&"rozet"].filter(Boolean).concat(CFG.extra.filter(x=>x.src===p).length?[CFG.extra.filter(x=>x.src===p).length+"× sayfada"]:[]);
+ let h=`<h2>Görsel kütüphanesi</h2><div class="drop" id="drop" tabindex="0" role="button">Görselleri sürükle bırak ya da seçmek için tıkla<br><small>PNG, JPG, WebP, GIF, SVG. Büyük görseller otomatik küçültülür.</small></div><input type="file" id="file" accept="image/*" multiple hidden>`;
+ h+=`<div class="lib">`+CFG.media.map(p=>`<div class="it"><img src="${esc(thumb(p))}" alt="" loading="lazy"><div class="i">${used(p).map(u=>`<b>${esc(u)}</b>`).join("")}${pending.has(p)?"<b style='background:var(--cyan)'>yeni</b>":""}<br>${esc(fname(p))}</div><div class="bar"><button class="b sm" data-a="use|${esc(p)}" type="button">Sayfaya ekle</button><button class="b sm red" data-a="rm|${esc(p)}" type="button">Sil</button></div></div>`).join("")+`</div>`;
+ h+=`<h2>Logo ve rozet</h2><div class="g2"><div class="row" style="grid-template-columns:1fr"><div>${SEL("Logo (giriş)","logo",mediaOpts(),{r:1})}<img class="th" style="margin-top:8px;aspect-ratio:16/9;object-fit:contain;border-radius:9px" src="${esc(thumb(CFG.logo))}" alt=""></div></div><div>${SEL("Rozet (hakkında)","badge",mediaOpts(),{r:1})}<img class="th" style="margin-top:8px;aspect-ratio:16/9;object-fit:contain;border-radius:9px" src="${esc(thumb(CFG.badge))}" alt=""></div></div>`;
+ h+=`<h2>Ekstra görseller (${CFG.extra.length})</h2><p style="color:var(--muted);font-size:13px;margin:0">Aynı yerdeki görseller listedeki sırayla dizilir. Küçük görseller yan yana durur.</p>`;
+ h+=CFG.extra.map((x,i)=>`<div class="card"><div class="row" style="margin-top:12px"><img class="th" src="${esc(thumb(x.src))}" alt=""><div>${SEL("Görsel",`extra.${i}.src`,mediaOpts(),{r:1})}</div></div><div class="g2"><div>${SEL("Nerede","extra."+i+".place",Object.entries(PLACES))}</div><div>${SEL("Boyut","extra."+i+".size",Object.entries(SIZES))}</div></div>${F("Alt yazı (altına görünür, boş olabilir)",`extra.${i}.cap`)}${F("Erişilebilirlik metni (alt)",`extra.${i}.alt`)}${F("Tıklayınca açılacak link (isteğe bağlı)",`extra.${i}.href`,{type:"url"})}<label style="display:flex;gap:8px;align-items:center;font-size:14px;color:var(--text)"><input type="checkbox" data-p="extra.${i}.round"${x.round?" checked":""}> Yuvarlak kırp</label><div class="bar">${mv("extra",i,CFG.extra.length)}${del("extra",i)}</div></div>`).join("");
+ h+=`<div class="bar"><button class="b sm" data-a="add|extra" type="button">+ Yerleşim ekle</button></div><h2>Galeri başlığı</h2>${F("Galeri bölümü başlığı","galleryTitle")}`;
+ return h}
+function paneGen(){return `<h2>Genel</h2>${F("Proje adı","brand")}${F("Ticker","ticker")}${F("Ağ (chain)","chain")}${F("Toplam arz (sayı)","supply",{num:1})}${F("Kontrat adresi","contract")}${F("Slogan","tagline",{area:1})}${F("Hakkında başlığı","aboutTitle")}${F("Hakkında metni","aboutText",{area:1})}`}
+function paneLnk(){return `<h2>Linkler</h2>`+list("links",(l,i)=>F("Buton adı",`links.${i}.name`)+F("URL",`links.${i}.url`),"Link ekle")}
+function paneTok(){const s=CFG.tokens.reduce((a,t)=>a+(+t.p||0),0);return `<h2>Tokenomics</h2><div class="st ${s===100?"ok":"bad"}" id="sum" style="padding:0">Toplam: ${+s.toFixed(2)}%${s===100?"":" (%100 olmalı, yayınlamak için düzelt)"}</div>`+list("tokens",(t,i)=>F("Ad",`tokens.${i}.n`)+`<div class="g3"><div>${F("Açıklama",`tokens.${i}.d`)}</div><div>${F("%",`tokens.${i}.p`,{num:1})}</div><div>${F("Renk",`tokens.${i}.c`,{type:"color"})}</div></div>`,"Dilim ekle")}
+function paneRoad(){return `<h2>Roadmap</h2>${F("Alt başlık","roadSub")}`+list("phases",(p,i)=>F("Faz başlığı",`phases.${i}.title`)+F("Etiket",`phases.${i}.tag`)+F("Maddeler (her satıra bir madde)",`phases.${i}.items`,{lines:1}),"Faz ekle")}
+function paneBuy(){return `<h2>Nasıl alınır</h2>`+list("steps",(s,i)=>F("Başlık",`steps.${i}.title`)+F("Metin",`steps.${i}.text`),"Adım ekle")}
+function paneFt(){return `<h2>Alt bilgi</h2>${F("Uyarı 1","disc1",{area:1})}${F("Uyarı 2","disc2",{area:1})}`}
+const PANES={img:paneImg,gen:paneGen,lnk:paneLnk,tok:paneTok,road:paneRoad,buy:paneBuy,ft:paneFt};
+function render(keep){const p=$("#pane"),y=p.scrollTop;$("#tabs").innerHTML=TABS.map(([k,t])=>`<button type="button" data-t="${k}" class="${k===tab?"on":""}">${t}</button>`).join("");p.innerHTML=PANES[tab]();if(keep)p.scrollTop=y;wireDrop()}
+
+/* ---------- olaylar ---------- */
+const NEW={links:()=>({name:"Yeni link",url:"#"}),tokens:()=>({n:"Yeni dilim",p:0,c:"#ffffff",d:"Açıklama"}),phases:()=>({title:"Yeni faz",tag:"Etiket",items:["Yeni hedef"]}),steps:()=>({title:"Yeni adım",text:"Adımı açıkla."}),
+ extra:()=>({src:CFG.media[CFG.media.length-1]||"",place:"about",size:"M",round:false,cap:"",alt:"",href:""})};
+$("#tabs").addEventListener("click",e=>{const t=e.target.dataset.t;if(t){tab=t;render()}});
+function onEdit(e){const t=e.target,p=t.dataset.p;if(!p)return;let v=t.type==="checkbox"?t.checked:t.value;
+ if(t.dataset.num)v=parseFloat(v)||0;if(t.dataset.lines)v=v.split("\n").map(s=>s.trim()).filter(Boolean);
+ if(t.dataset.r&&e.type!=="change")return;setP(p,v);touch();
+ if(/^tokens\.\d+\.p$/.test(p)){const s=CFG.tokens.reduce((a,x)=>a+(+x.p||0),0),el=$("#sum");el.className="st "+(s===100?"ok":"bad");el.style.padding="0";el.textContent="Toplam: "+(+s.toFixed(2))+"%"+(s===100?"":" (%100 olmalı, yayınlamak için düzelt)")}
+ if(t.dataset.r)render(1)}
+$("#pane").addEventListener("input",onEdit);$("#pane").addEventListener("change",onEdit);
+$("#pane").addEventListener("click",e=>{const b=e.target.closest("[data-a]");if(!b)return;const a=b.dataset.a.split("|"),act=a[0];
+ if(act==="add"){CFG[a[1]].push(NEW[a[1]]());if(a[1]==="extra"&&!CFG.media.length){CFG.extra.pop();return msg("Önce kütüphaneye görsel yükle.","bad")}}
+ else if(act==="del"){CFG[a[1]].splice(+a[2],1)}
+ else if(act==="mv"){const L=CFG[a[1]],i=+a[2],d=+a[3];let j=i+d;
+  if(a[1]==="extra")while(j>=0&&j<L.length&&L[j].place!==L[i].place)j+=d;
+  if(j<0||j>=L.length)return;[L[i],L[j]]=[L[j],L[i]]}
+ else if(act==="use"){CFG.extra.push({...NEW.extra(),src:a[1]});tab="img";touch();render();$("#pane").scrollTop=1e6;return msg("Eklendi. Aşağıdan yerini ve boyutunu seç.","ok")}
+ else if(act==="rm"){return rmMedia(a[1])}
+ touch();render(1)});
+function rmMedia(p){const u=[CFG.logo===p&&"logo",CFG.badge===p&&"rozet"].filter(Boolean);if(u.length)return msg("Bu görsel şu an "+u.join(" ve ")+" olarak kullanılıyor. Önce onu değiştir.","bad");
+ const n=CFG.extra.filter(x=>x.src===p).length;if(n&&!confirm(n+" yerleşimde kullanılıyor. Onlar da kaldırılsın mı?"))return;
+ CFG.extra=CFG.extra.filter(x=>x.src!==p);CFG.media=CFG.media.filter(m=>m!==p);if(pending.has(p)){pending.delete(p);delete blobs[p]}else removed.add(p);touch();render(1);msg(fname(p)+" kaldırıldı. Yayınlayınca repodan da silinir.","ok")}
+
+/* ---------- görsel yükleme ---------- */
+function wireDrop(){const d=$("#drop"),f=$("#file");if(!d)return;d.onclick=()=>f.click();d.onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();f.click()}};
+ f.onchange=()=>{add(f.files)};["dragover","dragenter"].forEach(n=>d.addEventListener(n,e=>{e.preventDefault();d.classList.add("over")}));["dragleave","drop"].forEach(n=>d.addEventListener(n,()=>d.classList.remove("over")));d.addEventListener("drop",e=>{e.preventDefault();add(e.dataTransfer.files)})}
+async function add(files){files=[...files];$("#file").value="";let n=0;for(const f of files){try{const r=await proc(f);if(r)n++}catch(e){msg("Okunamadı: "+f.name,"bad")}}if(n){touch();render(1);msg(n+" görsel eklendi. Sayfaya yerleştirmek için Sayfaya ekle butonunu kullan.","ok")}}
+async function proc(f){if(!f.type.startsWith("image/"))return 0;let ext={"image/png":"png","image/jpeg":"jpg","image/webp":"webp","image/gif":"gif","image/svg+xml":"svg"}[f.type];if(!ext)return 0;let blob=f;
+ if(/^image\/(png|jpeg|webp)$/.test(f.type)){const bm=await createImageBitmap(f),k=Math.min(1,1920/Math.max(bm.width,bm.height)),c=document.createElement("canvas");c.width=Math.round(bm.width*k);c.height=Math.round(bm.height*k);c.getContext("2d").drawImage(bm,0,0,c.width,c.height);
+  if(k<1||f.size>600e3)blob=await new Promise(r=>c.toBlob(r,f.type,.86))||f}
+ const base=f.name.replace(/\.[^.]+$/,"").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"")||"gorsel";let name=base+"."+ext,i=2;
+ while(CFG.media.includes("images/"+name)||repo.has("images/"+name))name=base+"-"+i+++"."+ext;
+ const p="images/"+name;blobs[p]=URL.createObjectURL(blob);raw[p]=blob;pending.add(p);CFG.media.push(p);return 1}
+const b64=b=>new Promise(r=>{const f=new FileReader();f.onload=()=>r(f.result.split(",")[1]);f.readAsDataURL(b)});
+
+/* ---------- ZIP (sıkıştırmasız) ---------- */
+function crc(u){const t=crc.t||(crc.t=Array.from({length:256},(_,n)=>{let c=n;for(let k=0;k<8;k++)c=c&1?3988292384^c>>>1:c>>>1;return c>>>0}));let r=-1;for(let i=0;i<u.length;i++)r=t[(r^u[i])&255]^r>>>8;return(r^-1)>>>0}
+function zip(fs){const E=new TextEncoder(),P=[],C=[];let off=0;for(const f of fs){const n=E.encode(f.name),c=crc(f.data),L=f.data.length,h=new DataView(new ArrayBuffer(30));
+ h.setUint32(0,0x04034b50,true);h.setUint16(4,20,true);h.setUint16(6,0x800,true);h.setUint16(12,0x21,true);h.setUint32(14,c,true);h.setUint32(18,L,true);h.setUint32(22,L,true);h.setUint16(26,n.length,true);P.push(h.buffer,n,f.data);
+ const d=new DataView(new ArrayBuffer(46));d.setUint32(0,0x02014b50,true);d.setUint16(4,20,true);d.setUint16(6,20,true);d.setUint16(8,0x800,true);d.setUint16(14,0x21,true);d.setUint32(16,c,true);d.setUint32(20,L,true);d.setUint32(24,L,true);d.setUint16(28,n.length,true);d.setUint32(42,off,true);C.push(d.buffer,n);off+=30+n.length+L}
+ let cs=0;C.forEach(x=>cs+=x.byteLength);const e=new DataView(new ArrayBuffer(22));e.setUint32(0,0x06054b50,true);e.setUint16(8,fs.length,true);e.setUint16(10,fs.length,true);e.setUint32(12,cs,true);e.setUint32(16,off,true);return new Blob([...P,...C,e.buffer],{type:"application/zip"})}
+const cfgText=()=>JSON.stringify(CFG,null,2)+"\n";
+function check(){const s=CFG.tokens.reduce((a,t)=>a+(+t.p||0),0);if(Math.abs(s-100)>1e-9){tab="tok";render();msg("Tokenomics toplamı %100 olmalı.","bad");return false}return true}
+$("#bzip").onclick=async()=>{if(!check())return;const fs=[{name:"config.json",data:new TextEncoder().encode(cfgText())}];
+ for(const p of pending)fs.push({name:p,data:new Uint8Array(await raw[p].arrayBuffer())});
+ const a=document.createElement("a");a.href=URL.createObjectURL(zip(fs));a.download="site-guncelleme.zip";document.body.appendChild(a);a.click();a.remove();
+ msg("ZIP indirildi. İçindekileri proje klasörüne kopyala."+(removed.size?" Silinenleri elle sil: "+[...removed].join(", "):""),"ok")};
+
+/* ---------- GitHub ---------- */
+async function gh(path,o={}){const r=await fetch("https://api.github.com/repos/"+S.repo+path,{...o,headers:{Authorization:"Bearer "+S.token,Accept:"application/vnd.github+json","Content-Type":"application/json"}});
+ const j=await r.json().catch(()=>({}));if(!r.ok)throw new Error(j.message||("HTTP "+r.status));return j}
+const dir=()=>S.dir?S.dir.replace(/^\/+|\/+$/g,"")+"/":"";
+$("#bpub").onclick=async()=>{if(!S.repo||!S.token)return openDlg();if(!check())return;if(!dirty&&!pending.size&&!removed.size)return msg("Yayınlanacak değişiklik yok.");
+ const br=S.br||"main",B=$("#bpub");B.disabled=true;
+ try{msg("Repo okunuyor…");const ref=await gh("/git/ref/heads/"+br),head=ref.object.sha,cm=await gh("/git/commits/"+head),tree=[];
+  msg("Dosyalar yükleniyor…");
+  const cb=await gh("/git/blobs",{method:"POST",body:JSON.stringify({content:cfgText(),encoding:"utf-8"})});tree.push({path:dir()+"config.json",mode:"100644",type:"blob",sha:cb.sha});
+  for(const p of pending){const b=await gh("/git/blobs",{method:"POST",body:JSON.stringify({content:await b64(raw[p]),encoding:"base64"})});tree.push({path:dir()+p,mode:"100644",type:"blob",sha:b.sha})}
+  for(const p of removed)tree.push({path:dir()+p,mode:"100644",type:"blob",sha:null});
+  const nt=await gh("/git/trees",{method:"POST",body:JSON.stringify({base_tree:cm.tree.sha,tree})});
+  const nc=await gh("/git/commits",{method:"POST",body:JSON.stringify({message:"Admin: site güncellemesi",tree:nt.sha,parents:[head]})});
+  await gh("/git/refs/heads/"+br,{method:"PATCH",body:JSON.stringify({sha:nc.sha})});
+  pending.forEach(p=>repo.add(p));pending.clear();removed.clear();dirty=false;$("#dirty").classList.remove("on");render(1);
+  msg("Yayınlandı. Vercel birkaç saniye içinde siteyi güncelleyecek.","ok")}
+ catch(e){msg("Yayınlanamadı: "+e.message,"bad")}finally{B.disabled=false}};
+function openDlg(){$("#s-repo").value=S.repo||"";$("#s-br").value=S.br||"";$("#s-dir").value=S.dir||"";$("#s-tok").value=S.token||"";$("#s-msg").textContent="";$("#dlg").showModal()}
+function readDlg(){S={repo:$("#s-repo").value.trim(),br:$("#s-br").value.trim()||"main",dir:$("#s-dir").value.trim(),token:$("#s-tok").value.trim()}}
+$("#bcfg").onclick=openDlg;$("#s-x").onclick=()=>$("#dlg").close();
+$("#s-ok").onclick=()=>{readDlg();try{localStorage.setItem("datAdmin",JSON.stringify(S))}catch(e){}$("#dlg").close();msg("GitHub ayarları kaydedildi.","ok")};
+$("#s-test").onclick=async()=>{readDlg();const m=$("#s-msg");m.className="st";m.textContent="Deneniyor…";try{const r=await gh("");await gh("/branches/"+S.br);m.className="st ok";m.textContent="Bağlandı: "+r.full_name+(r.permissions&&!r.permissions.push?" (yazma izni yok!)":"")}catch(e){m.className="st bad";m.textContent=e.message}};
+
+/* ---------- önizleme düğmeleri ---------- */
+document.querySelectorAll("[data-d]").forEach(b=>b.onclick=()=>$("#pvf").classList.toggle("m",b.dataset.d==="m"));
+$("#tpv").onclick=()=>{document.body.classList.toggle("showpv");$("#tpv").textContent=document.body.classList.contains("showpv")?"Editör":"Önizleme";sync()};
+
+/* ---------- başlat ---------- */
+fetch("../config.json",{cache:"no-store"}).then(r=>r.json()).then(j=>{CFG=j;CFG.extra=CFG.extra||[];CFG.galleryTitle=CFG.galleryTitle||"Gallery";
+ CFG.media=Array.from(new Set((CFG.media||[]).concat([CFG.logo,CFG.badge].filter(Boolean))));CFG.media.forEach(p=>repo.add(p));render();sync()})
+ .catch(()=>{$("#pane").innerHTML="<p style='padding:20px'>config.json yüklenemedi. Bu sayfa sitenin /admin yolunda, config.json ile aynı yayında olmalı.</p>"});
+</script>
+</body>
+</html>
